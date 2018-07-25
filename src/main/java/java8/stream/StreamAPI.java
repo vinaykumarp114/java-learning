@@ -5,12 +5,15 @@ package java8.stream;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -100,27 +103,61 @@ public class StreamAPI {
 
 		Stream<Integer> s = Stream.empty();
 		int result = s.reduce(id, sum);
-		System.out.println("Reduce - Stream empty::"+result);
-		
+		System.out.println("Reduce - Stream empty::" + result);
+
 		s = Stream.of(1);
 		result = s.reduce(id, sum);
-		System.out.println("Reduce - Stream one element::"+result);
-		
-		s = Stream.of(1,2,4,6);
+		System.out.println("Reduce - Stream one element::" + result);
+
+		s = Stream.of(1, 2, 4, 6);
 		result = s.reduce(id, sum);
-		System.out.println("Reduce - Stream multiple element::"+result);
-		
-		Stream<Boolean> s1 = Stream.of(true,false,true,true);
-		Optional<Boolean> r = s1.reduce((b1,b2) -> Boolean.logicalOr(b1, b2));
-		System.out.println("Reduce - stream of boolean::"+r);
+		System.out.println("Reduce - Stream multiple element::" + result);
+
+		Stream<Boolean> s1 = Stream.of(true, false, true, true);
+		Optional<Boolean> r = s1.reduce((b1, b2) -> Boolean.logicalOr(b1, b2));
+		System.out.println("Reduce - stream of boolean::" + r);
 	}
 
 	private void testTerminalOperation() {
+		List<Person> l1 = new ArrayList<>();
+		l1.add(new Person("A", 10));
+		l1.add(new Person("B", 20));
+		l1.add(new Person("C", 30));
+		l1.add(new Person("D", 40));
 
+		Optional<Integer> max = l1.stream().map(p -> p.getAge()).filter(a -> a < 30).max(Comparator.naturalOrder());
+		System.out.println("Terminal - max ::" + max);
+
+		boolean allMatch = l1.stream().map(p -> p.getAge()).allMatch(v -> v < 50);
+		System.out.println("Terminal - allMatch ::" + allMatch);
+
+		boolean anyMatch = l1.stream().map(p -> p.getAge()).anyMatch(a -> a == 21);
+		System.out.println("Terminal - anyMatch ::" + anyMatch);
 	}
 
 	private void testCollector() {
-
+		List<Person> l1 = new ArrayList<>();
+		l1.add(new Person("A", 10));
+		l1.add(new Person("B", 5));
+		l1.add(new Person("C", 25));
+		l1.add(new Person("D", 15));
+		l1.add(new Person("E", 30));
+		l1.add(new Person("F", 30));
+		
+		String result = l1.stream().filter(p -> p.getAge() > 15).map(p -> p.getName()).collect(Collectors.joining(" "));
+		System.out.println("Collectors Join :: "+result);
+		
+		List<Person> persons = l1.stream().filter(p -> p.getAge() < 20).collect(Collectors.toList());
+		System.out.println("Collectors toList :: "+persons);
+		
+		Map<Integer, List<Person>> personMap = l1.stream().collect(Collectors.groupingBy(Person::getAge));
+		System.out.println("Collectors Map ::"+personMap);
+		
+		Map<Integer, Long> mapCount = l1.stream().collect(Collectors.groupingBy(Person::getAge, Collectors.counting()));
+		System.out.println("Collector Count ::"+mapCount);
+		
+		Map<String, Person> collect = l1.stream().collect(Collectors.toMap(Person::getName, Function.identity()));
+		System.out.println("Collector toMap :: "+collect);
 	}
 }
 
