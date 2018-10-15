@@ -96,7 +96,7 @@ public class LambdaFunctions {
 	}
 
 	private void testComparator() {
-		Comparator<String> c1 = (s1, s2) -> Integer.compare(s1.length(), s1.length());
+		Comparator<String> c1 = (s1, s2) -> Integer.compare(s1.length(), s2.length());
 
 		List<String> l1 = Arrays.asList("*", "****", "**");
 		Collections.sort(l1, c1);
